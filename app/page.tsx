@@ -9,8 +9,8 @@ export default function Home(): JSX.Element {
       <section className="w-full py-12 md:py-24 lg:py-32">
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center space-y-4 text-center">
-            <div className="space-y-2">
-              <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-800">
+            <div className="space-y-3">
+              <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-800 leading-[1.rem] py-[30px]">
                 Welcome to AuraSight
               </h1>
               <p className="mx-auto max-w-[700px] text-gray-300 md:text-xl">

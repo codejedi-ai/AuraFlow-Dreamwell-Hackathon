@@ -2,7 +2,28 @@
 
 import React, { useState, FormEvent } from "react";
 import Image from "next/image";
-import { FormData, InfluencerMatch } from "@/types";
+
+// Define interfaces for type safety
+interface InfluencerMatch {
+  name: string;
+  platform: string;
+  followers: string;
+  engagement: string;
+  niche: string;
+  details: string;
+  values: string[];
+  vibeScore: number;
+  audienceAlignment: number;
+  contentStyle: string;
+}
+
+interface FormData {
+  brand: string;
+  influencer: string;
+  brandValues: string[];
+  missionStatement: string;
+  targetEmotion: string;
+}
 
 export default function Match(): JSX.Element {
   const [isLoading, setIsLoading] = useState<boolean>(false);

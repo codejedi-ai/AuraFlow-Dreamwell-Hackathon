@@ -1,21 +1,52 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
-import { UserData } from "@/types"
-import { ProfileData, ProfileFormProps } from "@/types/profile"
+import { useState, useActionState } from "react" // Ensure useActionState is imported
+import { createProfile } from "@/app/actions/profile"
+
+interface UserData {
+  id: string
+  email: string
+  firstName?: string
+  lastName?: string
+  accountType?: string
+}
+
+interface ProfileFormProps {
+  userData: UserData
+}
+
+interface ProfileData {
+  displayName: string
+  bio: string
+  location: string
+  website: string
+  accountType: string
+  companyName: string
+  industry: string
+  companySize: string
+  brandValues: string[]
+  missionStatement: string
+  targetAudience: string
+  platforms: string[]
+  followerCount: string
+  contentCategories: string[]
+  personalValues: string[]
+  contentStyle: string
+  audienceAge: string
+  audienceGender: string
+}
 
 export default function ProfileForm({ userData }: ProfileFormProps) {
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [success, setSuccess] = useState(false)
+  // useActionState is correctly used here, assuming React 19 is active
+  const [state, action, isPending] = useActionState(createProfile, undefined)
   const [step, setStep] = useState(1)
   const [profileData, setProfileData] = useState<ProfileData>({
     displayName: userData.firstName && userData.lastName ? `${userData.firstName} ${userData.lastName}` : "",
     bio: "",
     location: "",
     website: "",
-    accountType: userData.accountType === "brand" ? "brand" : "influencer",
+    accountType: userData.accountType || "brand",
     companyName: "",
     industry: "",
     companySize: "",
@@ -97,22 +128,6 @@ export default function ProfileForm({ userData }: ProfileFormProps) {
 
   const nextStep = () => setStep((prev) => prev + 1)
   const prevStep = () => setStep((prev) => prev - 1)
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError("")
-
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      setSuccess(true)
-    } catch (err) {
-      setError("Failed to create profile. Please try again.")
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const renderBasicInfo = () => (
     <>
@@ -477,10 +492,10 @@ export default function ProfileForm({ userData }: ProfileFormProps) {
         </button>
         <button
           type="submit"
-          disabled={loading}
+          disabled={isPending}
           className="w-1/2 py-3 px-4 rounded-lg font-semibold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? (
+          {isPending ? (
             <>
               <svg
                 className="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline"
@@ -554,13 +569,15 @@ export default function ProfileForm({ userData }: ProfileFormProps) {
           <p className="text-purple-200 text-sm mt-1">Step {step} of 3</p>
         </div>
 
-        {error && (
+        {state?.errors && (
           <div className="bg-red-900 border border-red-600 text-red-200 p-4 m-6 rounded-md">
-            {error}
+            {Object.entries(state.errors).map(([field, errors]) => (
+              <p key={field}>{errors?.[0]}</p>
+            ))}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="p-6">
+        <form action={action} className="p-6">
           {/* Hidden fields to pass all data */}
           <input type="hidden" name="displayName" value={profileData.displayName} />
           <input type="hidden" name="bio" value={profileData.bio} />
